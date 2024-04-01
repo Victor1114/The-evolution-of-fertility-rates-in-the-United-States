@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Models the data
+# Purpose:  Models of the data to generate inferential statistics.
 # Author: Yuchen Chen
 # Contact: victorchen.chen@mail.utoronto.ca
 # Date: 25 March 2024

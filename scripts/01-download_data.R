@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from World Bank Database
+# Purpose: Downloads and saves the data from World Bank Database.
 # Author: Yuchen Chen
 # Contact: victorchen.chen@mail.utoronto.ca
 # Date: 25 March 2024

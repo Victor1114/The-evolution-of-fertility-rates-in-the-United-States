@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Clean up raw data and retain data from 1992 to 2022
+# Purpose: Clean up raw data and retain data from 1992 to 2022.
 # Author: Yuchen Chen
 # Contact: victorchen.chen@mail.utoronto.ca
 # Date: 25 March 2024

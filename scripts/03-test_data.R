@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Tests data on US fertility rate, economic development level, and female employment rate [...UPDATE THIS...]
+# Purpose: Tests data on US fertility rate, economic development level, and female employment rate.
 # Author: Yuchen Chen
 # Contact: victorchen.chen@mail.utoronto.ca
 # Date: 25 March 2024

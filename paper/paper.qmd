@@ -1,0 +1,258 @@
+---
+title: "The evolution of fertility rates in the United States"
+subtitle: "The relationship between fertility rate, economic level, and female employment rate in the United States from 1992 to 2021"
+author: Yuchen Chen
+thanks: "Code and data are available at: <https://github.com/Victor1114/The-evolution-of-fertility-rates-in-the-United-States.git>"
+date: today
+date-format: long
+abstract: "This Paper analyzes the relationship between the fertility rate, economic development level, and female employment rate in the United States from 2001 to 2021 based on data from the World Bank database. Research has found a positive correlation between the fertility rate and female employment rate in the United States, and a negative correlation with the level of economic development. This result can provide valuable insights for the government to formulate effective policies to stimulate and increase the country's fertility rate."
+format: pdf
+number-sections: False
+toc: TRUE
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+library(modelsummary)
+library(knitr)
+library(tidyverse)
+library(here)
+library(ggplot2)
+```
+
+
+# 1 Introduction
+
+The fertility rate refers to the average number of babies born per thousand women of childbearing age during a certain period of time (usually one year). Women of childbearing age refer to women in the reproductive period, with a general age range of 15-45 years old. The fertility rate is very important and a core factor affecting the rate of population growth. It is also an important indicator for formulating population plans and making population forecasts, which will have various impacts on social structure and economic development.
+
+However, many countries are currently facing the problem of declining fertility rates. Studies have shown that half of the countries have fertility rates so low that they cannot maintain their population size, and 97% of the country's population will decrease by the end of this century (@declining). From a practical perspective, the factors that affect a country's fertility rate are diverse, such as its economy, culture, society, policy situation, etc.
+
+In this article, we will focus on the two factors of economic development level and female employment rate, and analyze the relationship between the fertility rate, economic development level, and female employment rate in the United States through linear regression. When measuring the level of economic development, this article uses per capita GDP, which means that this article estimates the relationship between the US fertility rate, per capita GDP, and female employment rate. We will obtain data from from the open database, WorldBank(@database). Through analysis, we found a positive relationship between fertility rate and female employment rate, and a negative relationship between fertility rate and per capita GDP.
+
+Although literature has studied the influencing factors of fertility rates in different countries, this article focuses on the world's largest economy, the United States, and examines the relationship between fertility rates, per capita GDP, and female employment rates. This study can provide valuable insights for the government to formulate effective policies to stimulate and increase the country's fertility rate.
+
+The structure of this article is as follows. In Section 1, we will introduce the research purpose, data and methods used in this article. In Section 2, a detailed introduction to the data will be provided, and visual analysis will be conducted on each variable as well as the relationship between the independent and dependent variables. In Section 3, a linear regression model will be established to explore the relationship between US fertility rate, per capita GDP, and female employment rate. In Section 4, the results of the model will be presented and analyzed. In Section 5, the research results and the shortcomings of this article were discussed, and the next research plan was explained.
+
+# 2 Data
+
+## 2.1 Data Description and Methodology
+
+The data used in this article is from the World Bank Open Database and can be publicly accessed through the World Bank data website. The World Bank was founded in 1945 and is an international financial institution composed of five member institutions. In 1947, it became a specialized agency of the United Nations with the aim of providing loans and investments to member countries and promoting balanced international trade development. 
+
+The organization's data is compiled based on officially recognized international sources and has been provided since 1960. It is updated annually and includes 5 categories and 854 indicators, including population, environment, economy, domestic market, and foreign economic and trade relations. This data is widely used by researchers and policymakers to understand operational conditions, development trends, and structural changes, and to provide information for policy decision-making.
+
+The datasets used in this article are three: Fertility rate (per capita female fertility), Per capita GDP (in current US dollars), and Employment to population ratio, 15+, female (%) (national estimate). These data will only focus on the United States, including data from 2002 to 2021 for the 20 years.
+
+```{r Import the data}
+#| include: false
+#| warning: false
+#| message: false
+#| echo: false
+data <-
+  read_csv("analysis_data.csv")
+knitr::kable(data[1:10,], align="l", caption="A summary table of cleaned data",format = "pandoc")
+```
+
+
+Table 1 shows the partially cleaned dataset, which includes 4 variables and 20 observations. The variables in the dataset include fertility rate, year, female employment rate (in percentage), and per capita GDP.
+
+The data analysis and modeling in this article mainly use R statistical programming language (@citeR), as well as several other toolkits such as tidyverse (@tidyverse), modelsummary (@modelsummary), and rstanarm (@rstanarm). Ggplot2 (@ggplot2) is used to draw all the images in this article, while knitr (@knitr) and kableExtra (@kable) are used to draw the tables in this article.
+
+
+## 2.2 Data Visualization
+
+### 2.2.1 Fertility Rate from 2002 to 2021
+
+```{r}
+#| label: fig-1
+#| fig-cap: Fertility Rate in U.S. from 1992 to 2021
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Year, y = Fertility_rate)) +
+  geom_line() +
+  geom_point()+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(y = "Fertility rate")
+
+```
+
+As shown in @fig-1, since 2002, the fertility rate in the United States has been increasing and then decreasing, showing an upward trend before 2007 and reaching a peak of 2.12 in 2007, before gradually decreasing year by year. This may be due to the economic crisis in the United States in 2008, which resulted in a three-year straight decline in fertility rates as shown in the graph, without any signs of reversal. Although the fertility rate fluctuates, overall it shows a downward trend. From 2002 to 2021, the fertility rate decreased from 2.0205 to 1.6640.
+
+### 2.2.2 Female Employment Rate from 2002 to 2021
+
+```{r}
+#| label: fig-2
+#| fig-cap: Female Employment Rate in U.S. from 1992 to 2021
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Year, y = Female_employment_rate)) +
+  geom_line() +
+  geom_point()+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(y = "Female Employment Rate(%)")
+
+```
+
+@Fig-2 shows the trend of female employment rate in the United States from 2002 to 2021. The picture shows that the female fertility rate shows a trend of first decreasing and then increasing. Similarly, since 2008, the female employment rate has plummeted for three consecutive years. In 2020, the Female employment rate decreased even more significantly, possibly due to the impact of the pandemic outbreak. Similarly, there are significant fluctuations in the female employment rate, but overall it shows a downward trend. From 2002 to 2021, the female employment rate decreased from 56.275 to 53.166.
+
+### 2.2.3 Per Capita GDP from 2002 to 2021
+
+```{r}
+#| label: fig-3
+#| fig-cap: Per Capita GDP in U.S. from 1992 to 2021
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Year, y = Per_capita_GDP)) +
+  geom_line() +
+  geom_point()+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(y = "Per Capita GDP")
+
+```
+
+@Fig-3 shows the trend of per capita GDP in the United States from 2002 to 2021. From the graph, it can be seen that the per capita GDP has shown an overall growth trend, with only slight fluctuations in 2009 and 2020. The time nodes of these two fluctuations are basically consistent with the fertility rate and female employment rate, which may also be due to the impact of the financial crisis and the epidemic.
+
+### 2.2.4 Fertility Ratefrom and Female Employment Rate from 2002 to 2021
+
+```{r}
+#| label: fig-4
+#| fig-cap: Fertility Ratefrom and Female Employment Rate in U.S. from 1992 to 2021
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Female_employment_rate, y = Fertility_rate)) +
+  geom_point()+
+   geom_smooth(
+    method = "lm",
+    alpha = 0.3,
+    linetype = "dashed",
+    formula = "y ~ x"
+  )+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(x = "Female Employment Rate(%)", y = "Fertility Rate")
+
+```
+
+@Fig-3 shows the relationship between the fertility rate and female employment rate in the United States from 2002 to 2021. The picture shows that the female employment rate has a certain impact on the fertility rate, and from the smooth curve, there is a positive relationship between these two variables.
+
+### 2.2.5 Fertility Ratefrom and Per Capita GDP from 2002 to 2021
+
+
+```{r}
+#| label: fig-5
+#| fig-cap: Fertility Ratefrom and Per Capita GDP in U.S. from 1992 to 2021
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Per_capita_GDP, y = Fertility_rate)) +
+  geom_point()+
+  geom_smooth(
+    method = "lm",
+    alpha = 0.3,
+    linetype = "dashed",
+    formula = "y ~ x"
+  )+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill = "white"))+
+  labs(x = "Per Capita GDP", y = "Fertility Rate")
+
+```
+@fig-5 shows the relationship between the fertility rate and per capita GDP in the United States from 2002 to 2021. The picture shows that the per capita GDP rate has a certain impact on the fertility rate, and from the smooth curve, there is a negative relationship between these two variables.
+
+# 3 Model
+
+After exploratory analysis of data visualization, we found that both female employment rate and per capita GDP have a certain impact on fertility rate. The employment rate and fertility rate of women seem to show the same trend, while the per capita GDP and fertility rate show the opposite trend, indicating a potential linear relationship. To further analyze the relationship between female employment rate, per capita GDP and fertility rate, we will establish a multiple linear regression model.
+
+The model is as follows:
+
+$$y_{ij} = \beta_{0}+\beta_{1}FER{ij} + \beta_{2} PCGDP_{ij}$$
+
+where:
+
+-   $y_{ij}$ is Fertility Rate in U.S. for observation j in year i..
+
+-   $FER_{ij}$ is Female Employment Rate(%) in U.S. for observation j in year i.
+
+-   $PCGDP_{ij}$ is Per Capita GDP in U.S. for observation j in year i.
+
+-   $\beta_{0}$ is intercept.
+
+-   $\beta_{1}$ is the coefficient for Female Employment Rate(%).
+
+-   $\beta_{2}$ is the coefficient for Per Capita GDP.
+
+Through this model, we will estimate the value of $\beta_{1}$ and $\beta_{2}$. To test whether these two coefficients are significant, i.e. whether there is a linear relationship between the corresponding independent and dependent variables, we will use the t-test method to calculate the p-value of the coefficient. If the p-value is less than the selected significance level, the coefficient can be considered significant, and there is a significant relationship between the corresponding independent and dependent variables. This article selects 0.05 as the selected significance level.
+
+# 4 Results
+
+```{r read model}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+library(rstanarm)
+
+first_model <-
+  readRDS(file = here::here("models/first_model.rds"))
+```
+
+```{r result}
+#| echo: false
+#| warning: false
+#| message: false
+
+modelsummary::modelsummary(
+  list(
+    "First model" = first_model
+  ),
+  fmt = 6
+)
+```
+
+
+Table 2 shows the results of the linear regression model. The p-values of the two variables in the model are less than 0.05, indicating that both female employment rate and per capita GDP have a significant impact on fertility rate. Therefore, no independent variable in the model will be reduced. 
+
+From the results, it can be seen that $\beta_{1}=0.031$ which indicates a positive correlation between female employment rate and fertility rate. Specifically, under the same conditions, for every one percentage point increase in female employment rate, the fertility rate will increase by 0.031. $\beta_{2}=0.000012$ which means that there is a negative correlation between per capita GDP and fertility rate. Specifically, under the same conditions, for every 1 increase in the 'per capita GDP' variable, the fertility rate decreases by 0.000012. It should be noted that this represents the correlation between variables, rather than causal relationships.
+
+# 5 Discussion
+
+## 5.1 Economic factors affect a country's fertility rate.
+
+As we observed in the third section, the birth rate in the United States has shown a downward trend over the past 20 years, while per capita GDP has shown a positive trend.
+
+Generally speaking, when the economic situation is poor, people may delay having children, and when the economy usually starts to recover, the birth rate will rise. The United States experienced economic recession in the early 1980s and early 1990s, with declining birth rates, but soon continued to recover with economic recovery. But from 2002 to 2020, this phenomenon seems to have changed. The economic pressure of the 2008 financial crisis undoubtedly led to a sudden decline in fertility rates after 2007, but the fertility rate continued to decline for a period of 14 years.
+
+This indicates that the impact of economic factors on a country's fertility rate has changed. When the economy declines, the fertility rate will decrease, but when the economy continues to recover and improve, the rate of decline will slow down, but it will not change its downward trend. These facts all indicate that factors beyond the economy also play a role.
+
+## 5.2 Female employment rate and its impact on fertility rate
+
+The model in Section 4 indicates that the employment rate of women affects the fertility rate and shows a positive correlation. In recent years, with the improvement of economic and social development level, the cost of raising children has also skyrocketed, which has greatly reduced the willingness of families to have children. A higher employment rate for women means a continuous increase in household income and an increasing economic burden on families, providing more guarantees for childbirth and childcare. At the same time, women's career development can also improve their social status and realize self-worth. When women's personal needs are met, their likelihood of having children will further increase.
+
+## 5.3 Weaknesses and next steps
+
+This article analyzes the relationship between fertility rate, female employment rate, and per capita GDP inflow. Although the research results of this article provide some valuable clues, there are also certain limitations.
+
+The data in this article only includes data from the past 20 years, which is relatively short and is insufficient to support the analysis. In future research, it is possible to consider expanding the time range of the dataset, such as extending it to the past 50 years, in order to provide more reliable analysis results for studying the relationship between fertility rate, female employment rate, and per capita GDP inflow.
+
+In addition, this study mainly focuses on the United States. In order to make the results more representative, data from countries with different levels of economic development (such as China) can be included, as well as data from countries with the same level of economic development (such as the United Kingdom and Germany). At the same time, the impact of country differences on fertility rates can be compared.
+
+\newpage
+
+
+# References

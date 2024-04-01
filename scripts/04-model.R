@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose:  Models of the data to generate inferential statistics.
+# Purpose: Models of the data to generate inferential statistics.
 # Author: Yuchen Chen
 # Contact: victorchen.chen@mail.utoronto.ca
 # Date: 25 March 2024
@@ -12,7 +12,7 @@ library(tidyverse)
 library(rstanarm)
 
 #### Read data ####
-analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
+analysis_data <- read_csv(file=here::here("data/analysis_data/analysis_data.csv"))
 
 ### Model data ####
 first_model <-

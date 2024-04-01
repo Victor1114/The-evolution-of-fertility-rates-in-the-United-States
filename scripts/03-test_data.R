@@ -11,7 +11,7 @@
 library(tidyverse)
 
 #### Test data ####
-simulated_data <- read.csv("data/simulated_data/simulated_data.csv")
+simulated_data <- read.csv(file=here::here("data/simulated_data/simulated_data.csv"))
 
 test_that("Check number of observations is correct",{
   expect_equal(nrow(simulated_data), 20)

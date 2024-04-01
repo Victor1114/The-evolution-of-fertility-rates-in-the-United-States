@@ -10,7 +10,7 @@
 library(tidyverse)
 
 #### Clean data ####
-raw_data <- read_csv("data/raw_data/raw_data.csv")
+raw_data <- read_csv(file=here::here("data/raw_data/raw_data.csv"))
 
 cleaned_data <-
   raw_data |>
@@ -19,4 +19,4 @@ cleaned_data <-
 range(cleaned_data$Per_capita_GDP)
 
 #### Save data ####
-write_csv(cleaned_data, "data/analysis_data/analysis_data.csv")
+write_csv(cleaned_data, here::here("data/analysis_data/analysis_data.csv"))

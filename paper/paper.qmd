@@ -7,7 +7,6 @@ date: today
 date-format: long
 abstract: "This Paper analyzes the relationship between the fertility rate, economic development level, and female employment rate in the United States from 2001 to 2021 based on data from the World Bank database. Research has found a positive correlation between the fertility rate and female employment rate in the United States and a negative correlation with the level of economic development. This result can provide valuable insights for the government to formulate effective policies to stimulate and increase the country’s fertility rate."
 format: pdf
-number-sections: TRUE
 toc: TRUE
 bibliography: references.bib
 ---
@@ -72,7 +71,7 @@ The data analysis and modeling in this article mainly use R statistical programm
 #| warning: false
 #| message: false
 
-ggplot(data, aes(x = Year, y = Fertility_rate)) +
+ggplot(data, aes(x = Year, y = Fertility_rate, color = "red")) +
   geom_line() +
   geom_point()+
   theme_minimal()+
@@ -92,7 +91,7 @@ As shown in @fig-1, since 2002, the fertility rate in the United States has been
 #| warning: false
 #| message: false
 
-ggplot(data, aes(x = Year, y = Female_employment_rate)) +
+ggplot(data, aes(x = Year, y = Female_employment_rate, color = "red")) +
   geom_line() +
   geom_point()+
   theme_minimal()+
@@ -112,7 +111,7 @@ ggplot(data, aes(x = Year, y = Female_employment_rate)) +
 #| warning: false
 #| message: false
 
-ggplot(data, aes(x = Year, y = Per_capita_GDP)) +
+ggplot(data, aes(x = Year, y = Per_capita_GDP, color = "red")) +
   geom_line() +
   geom_point()+
   theme_minimal()+
@@ -132,7 +131,7 @@ ggplot(data, aes(x = Year, y = Per_capita_GDP)) +
 #| warning: false
 #| message: false
 
-ggplot(data, aes(x = Female_employment_rate, y = Fertility_rate)) +
+ggplot(data, aes(x = Female_employment_rate, y = Fertility_rate, color = "red")) +
   geom_point()+
    geom_smooth(
     method = "lm",
@@ -158,7 +157,7 @@ ggplot(data, aes(x = Female_employment_rate, y = Fertility_rate)) +
 #| warning: false
 #| message: false
 
-ggplot(data, aes(x = Per_capita_GDP, y = Fertility_rate)) +
+ggplot(data, aes(x = Per_capita_GDP, y = Fertility_rate, color = "red")) +
   geom_point()+
   geom_smooth(
     method = "lm",
@@ -209,16 +208,21 @@ library(rstanarm)
 
 first_model <-
   readRDS(file = here::here("models/first_model.rds"))
+second_model <-
+  readRDS(file = here::here("models/second_model.rds"))
 ```
 
 ```{r result}
 #| echo: false
+#| eval: true
+#| label: tbl-modelresults
+#| tbl-cap: "A fertility rate explanatory model based on per capita GDP and female employment rate"
 #| warning: false
-#| message: false
 
 modelsummary::modelsummary(
   list(
-    "First model" = first_model
+    "First model" = first_model,
+    "Second model, include interactive items" = second_model
   ),
   fmt = 6
 )
@@ -251,7 +255,44 @@ The data in this article only includes data from the past 20 years, which is rel
 
 In addition, this study mainly focuses on the United States. In order to make the results more representative, data from countries with different levels of economic development (such as China) can be included, as well as data from countries with the same level of economic development (such as the United Kingdom and Germany). At the same time, the impact of country differences on fertility rates can be compared.
 
+# Appendix {-}
+
+## Model Assumption Check
+
+```{r}
+#| label: fig-6
+#| fig-cap: Checking the linear relationship assumption of linear model
+#| echo: false
+#| warning: false
+#| message: false
+plot(first_model,1)
+```
+
+```{r}
+#| label: fig-7
+#| fig-cap: Checking the normal distribution assumption of linear model
+#| echo: false
+#| warning: false
+#| message: false
+plot(first_model,1)
+```
+
+```{r}
+#| label: fig-8
+#| fig-cap: Checking the constant residual variance assumption of linear model
+#| echo: false
+#| warning: false
+#| message: false
+plot(first_model,1)
+```
+
+To ensure the effectiveness of the model, we tested the hypotheses of the multiple linear regression model, and @fig-6, @fig-7 and @fig-8 show the relevant graphs used to examine the hypotheses.
+
+@fig-6 the residual vs. fitting graph tests whether the assumption of linear relationship holds. Due to the fact that the red line is almost horizontal and only has some twists and turns at the tail, it can be considered that the model almost satisfies the linear assumption. If we can consider more years of data as mentioned in the future outlook in the article, the linear assumption should be more in line with the requirements.
+
+@fig-7 the Normal QQ chart tests whether the hypothesis of residual error following normal distribution holds. Since almost all points are distributed along dashed lines, presenting a straight line, it can be considered that the residuals follow a normal distribution.
+
+@fig-8 the scale position map tests whether the hypothesis of constant residual variance is valid. Due to the random distribution of points around the horizontal line, it can be assumed that the assumption of invariant variance is valid.
+
 \newpage
-
-
 # References

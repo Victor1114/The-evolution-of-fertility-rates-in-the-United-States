@@ -15,3 +15,7 @@ The repo is structured as:
 -    `others` contains relevant literature and the original sketches made of the data set and the graph of all observations.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts for simulating, downloading, cleaning, testing data, and modeling.
+
+## Statement on LLM usage
+
+No any LLM usage in this paper.
